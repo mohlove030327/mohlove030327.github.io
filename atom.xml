@@ -10,7 +10,7 @@
   <rights>All rights reserved 2026, moh</rights>
   <subtitle>活着就好</subtitle>
   <title>moh`blog</title>
-  <updated>2026-03-26T15:42:59.188Z</updated>
+  <updated>2026-03-28T12:22:52.700Z</updated>
   <entry>
     <author>
       <name>moh</name>
@@ -18,7 +18,7 @@
     <category term="部署" scheme="http://example.com/categories/%E9%83%A8%E7%BD%B2/"/>
     <category term="部署" scheme="http://example.com/tags/%E9%83%A8%E7%BD%B2/"/>
     <content>
-      <![CDATA[<h1 id="docker和docker-commpose离线安装"><a href="#docker和docker-commpose离线安装" class="headerlink" title="docker和docker-commpose离线安装"></a>docker和docker-commpose离线安装</h1><h2 id="安装包下载"><a href="#安装包下载" class="headerlink" title="安装包下载"></a>安装包下载</h2><p>docker安装包下载:[<a href="https://download.docker.com/linux/static/stable/aarch64/">https://download.docker.com/linux/static/stable/aarch64/</a>]:</p><p>docker-compose安装包下载: [<a href="https://github.com/docker/compose/releases">https://github.com/docker/compose/releases</a>]</p>]]>
+      <![CDATA[<h1 id="docker和docker-commpose离线安装"><a href="#docker和docker-commpose离线安装" class="headerlink" title="docker和docker-commpose离线安装"></a>docker和docker-commpose离线安装</h1><h2 id="安装包下载"><a href="#安装包下载" class="headerlink" title="安装包下载"></a>安装包下载</h2><p>docker安装包下载:[<a href="https://download.docker.com/linux/static/stable/aarch64/">https://download.docker.com/linux/static/stable/aarch64/</a>]:</p><p>docker-compose安装包下载: [<a href="https://github.com/docker/compose/releases">https://github.com/docker/compose/releases</a>]</p><p><img src="https://hexo-moh.oss-cn-beijing.aliyuncs.com/img/icon_256x256.png" alt="alt text"></p>]]>
     </content>
     <id>http://example.com/posts/6b7ec017.html</id>
     <link href="http://example.com/posts/6b7ec017.html"/>
@@ -27,6 +27,6 @@
       <![CDATA[<h1 id="docker和docker-commpose离线安装"><a href="#docker和docker-commpose离线安装" class="headerlink" title="docker和docker-commpose离线安装"></a>docker和d]]>
     </summary>
     <title>docker离线部署</title>
-    <updated>2026-03-26T15:42:59.188Z</updated>
+    <updated>2026-03-28T12:22:52.700Z</updated>
   </entry>
 </feed>

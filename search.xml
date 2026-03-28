@@ -8,7 +8,7 @@
       <link href="/posts/6b7ec017.html"/>
       <url>/posts/6b7ec017.html</url>
       
-        <content type="html"><![CDATA[<h1 id="docker和docker-commpose离线安装"><a href="#docker和docker-commpose离线安装" class="headerlink" title="docker和docker-commpose离线安装"></a>docker和docker-commpose离线安装</h1><h2 id="安装包下载"><a href="#安装包下载" class="headerlink" title="安装包下载"></a>安装包下载</h2><p>docker安装包下载:[<a href="https://download.docker.com/linux/static/stable/aarch64/">https://download.docker.com/linux/static/stable/aarch64/</a>]:</p><p>docker-compose安装包下载: [<a href="https://github.com/docker/compose/releases">https://github.com/docker/compose/releases</a>]</p>]]></content>
+        <content type="html"><![CDATA[<h1 id="docker和docker-commpose离线安装"><a href="#docker和docker-commpose离线安装" class="headerlink" title="docker和docker-commpose离线安装"></a>docker和docker-commpose离线安装</h1><h2 id="安装包下载"><a href="#安装包下载" class="headerlink" title="安装包下载"></a>安装包下载</h2><p>docker安装包下载:[<a href="https://download.docker.com/linux/static/stable/aarch64/">https://download.docker.com/linux/static/stable/aarch64/</a>]:</p><p>docker-compose安装包下载: [<a href="https://github.com/docker/compose/releases">https://github.com/docker/compose/releases</a>]</p><p><img src="https://hexo-moh.oss-cn-beijing.aliyuncs.com/img/icon_256x256.png" alt="alt text"></p>]]></content>
       
       
       <categories>
@@ -35,6 +35,17 @@
       <title>关于</title>
       <link href="/about/index.html"/>
       <url>/about/index.html</url>
+      
+        <content type="html"><![CDATA[]]></content>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>归档</title>
+      <link href="/archives/index.html"/>
+      <url>/archives/index.html</url>
       
         <content type="html"><![CDATA[]]></content>
       
@@ -87,17 +98,6 @@
     
     
     <entry>
-      <title>标签</title>
-      <link href="/tags/index.html"/>
-      <url>/tags/index.html</url>
-      
-        <content type="html"><![CDATA[]]></content>
-      
-    </entry>
-    
-    
-    
-    <entry>
       <title></title>
       <link href="/css/custom.css"/>
       <url>/css/custom.css</url>
@@ -109,9 +109,9 @@
     
     
     <entry>
-      <title>归档</title>
-      <link href="/archives/index.html"/>
-      <url>/archives/index.html</url>
+      <title>标签</title>
+      <link href="/tags/index.html"/>
+      <url>/tags/index.html</url>
       
         <content type="html"><![CDATA[]]></content>
       
