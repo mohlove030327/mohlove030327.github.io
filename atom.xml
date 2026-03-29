@@ -10,7 +10,7 @@
   <rights>All rights reserved 2026, moh</rights>
   <subtitle>活着就好</subtitle>
   <title>moh`blog</title>
-  <updated>2026-03-29T02:37:16.373Z</updated>
+  <updated>2026-03-29T06:04:27.523Z</updated>
   <entry>
     <author>
       <name>moh</name>
@@ -27,6 +27,26 @@
       <![CDATA[<h1 id="docker和docker-commpose离线安装"><a href="#docker和docker-commpose离线安装" class="headerlink" title="docker和docker-commpose离线安装"></a>docker和d]]>
     </summary>
     <title>docker离线部署</title>
-    <updated>2026-03-29T02:37:16.373Z</updated>
+    <updated>2026-03-29T06:04:27.523Z</updated>
+  </entry>
+  <entry>
+    <author>
+      <name>moh</name>
+    </author>
+    <category term="部署" scheme="http://example.com/categories/%E9%83%A8%E7%BD%B2/"/>
+    <category term="部署" scheme="http://example.com/tags/%E9%83%A8%E7%BD%B2/"/>
+    <category term="ssh" scheme="http://example.com/tags/ssh/"/>
+    <content>
+      <![CDATA[<h3 id="ssh"><a href="#ssh" class="headerlink" title="ssh"></a>ssh</h3><p>ssh是应用于远程连接服务器的一种协议</p><h3 id="基本用法"><a href="#基本用法" class="headerlink" title="基本用法"></a>基本用法</h3><h4 id="远程登录服务器命令"><a href="#远程登录服务器命令" class="headerlink" title="远程登录服务器命令"></a>远程登录服务器命令</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh user@hostname</span><br></pre></td></tr></table></figure><p>user: <em>用户名</em></p><p>hostname: <em>IP地址或者域名</em></p><p>第一登录是会出现以下提示</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">The authenticity of host <span class="string">&#x27;123.57.47.211 (123.57.47.211)&#x27;</span> can<span class="string">&#x27;t be established.</span></span><br><span class="line"><span class="string">ECDSA key fingerprint is SHA256:iy237yysfCe013/l+kpDGfEG9xxHxm0dnxnAbJTPpG8.</span></span><br><span class="line"><span class="string">Are you sure you want to continue connecting (yes/no/[fingerprint])?</span></span><br></pre></td></tr></table></figure><p>输入<em>yes</em>,然后回车即可.</p><p>这样会将该服务器的信息记录在~/.ssh/known_hosts文件中。</p><p>然后输入密码即可登录到远程服务器中。</p><h4 id="指定端口登录"><a href="#指定端口登录" class="headerlink" title="指定端口登录"></a>指定端口登录</h4><p>默认登录端口号为22。如果想登录某一特定端口：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh user@hostname -p 端口号</span><br></pre></td></tr></table></figure><h3 id="配置文件"><a href="#配置文件" class="headerlink" title="配置文件"></a>配置文件</h3><p>创建文件 <strong>~/.ssh/config</strong></p><p>在文件中输入:</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Host myserver1</span><br><span class="line">    HostName IP地址或域名</span><br><span class="line">    User 用户名</span><br><span class="line">x</span><br><span class="line">Host myserver2</span><br><span class="line">    HostName IP地址或域名</span><br><span class="line">    User 用户名</span><br></pre></td></tr></table></figure><p>之后再使用服务器时，可以直接使用别名<em>myserver1、myserver2</em>。</p><p>如 ssh myserver1</p><h3 id="密钥登录"><a href="#密钥登录" class="headerlink" title="密钥登录"></a>密钥登录</h3><p>进入文件 <strong>~/.ssh</strong></p><p>创建密钥:</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen</span><br></pre></td></tr></table></figure><p>然后一直回车即可。</p><p>执行结束后，~/.ssh/目录下会多两个文件：</p><p>​    1、id_rsa：私钥</p><p>​    2、id_rsa.pub：公钥</p><p>之后想免密码登录哪个服务器，就将公钥传给哪个服务器即可。</p><p>例如，想免密登录<em>myserver服务器</em>。则将公钥中的内容，复制到myserver中的~/.ssh/authorized_keys文件里即可。</p><p>也可以使用如下命令一键添加公钥：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-copy-id myserver</span><br></pre></td></tr></table></figure>]]>
+    </content>
+    <id>http://example.com/posts/f5f30b62.html</id>
+    <link href="http://example.com/posts/f5f30b62.html"/>
+    <published>2026-03-26T14:47:33.000Z</published>
+    <summary>
+      <![CDATA[<h3 id="ssh"><a href="#ssh" class="headerlink" title="ssh"></a>ssh</h3><p>ssh是应用于远程连接服务器的一种协议</p>
+<h3 id="基本用法"><a href="#基本用法" class="heade]]>
+    </summary>
+    <title>ssh基本用法</title>
+    <updated>2026-03-29T06:50:50.274Z</updated>
   </entry>
 </feed>
