@@ -4,6 +4,58 @@
   
     
     <entry>
+      <title>mybatis-plus自动分页</title>
+      <link href="/posts/0.html"/>
+      <url>/posts/0.html</url>
+      
+        <content type="html"><![CDATA[<h3 id="MyBatis-Plus-自动分页（三步核心笔记）"><a href="#MyBatis-Plus-自动分页（三步核心笔记）" class="headerlink" title="MyBatis-Plus 自动分页（三步核心笔记）"></a>MyBatis-Plus 自动分页（三步核心笔记）</h3><h4 id="步骤一-service层必须创建Page"><a href="#步骤一-service层必须创建Page" class="headerlink" title="步骤一: service层必须创建Page"></a>步骤一: service层必须创建Page</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> Page&lt;SesStuEval&gt; <span class="title function_">listPage</span><span class="params">(<span class="type">int</span> currentPage ,<span class="type">int</span> pageSize,SesStuEvalPageParam param)</span> &#123;</span><br><span class="line">    Page&lt;SesStuEval&gt; page = <span class="keyword">new</span> <span class="title class_">Page</span>&lt;&gt;(pcurrentPage, pageSize);</span><br><span class="line">    <span class="keyword">return</span> sesStuEvalMapper.listPage(page, param);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>✅ <strong>核心要点</strong>：</p><ul><li>必须通过<strong>new Page&lt;&gt;(current,size)</strong>创建分页对象</li><li>currentPage:当前页码(从1开始)</li><li>pageSize:每页数据条数</li><li>Ser’vice层服务初始化分页参数</li></ul><h4 id="步骤二-Mapper-必须接受Page"><a href="#步骤二-Mapper-必须接受Page" class="headerlink" title="步骤二:Mapper 必须接受Page"></a>步骤二:Mapper 必须接受Page</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Page&lt;SesStuEval&gt; <span class="title function_">listContainTopicPage</span><span class="params">(</span></span><br><span class="line"><span class="params">    <span class="meta">@Param(&quot;page&quot;)</span> Page&lt;SesStuEval&gt; page,</span></span><br><span class="line"><span class="params">    <span class="meta">@Param(&quot;param&quot;)</span> SesStuEvalPageParam param</span></span><br><span class="line"><span class="params">)</span>;</span><br></pre></td></tr></table></figure><p>✅ <strong>核心要点</strong>：</p><ul><li>方法第一个参数必须是 <code>Page&lt;T&gt;</code>类型</li><li>返回值类型也必须是 <code>Page&lt;T&gt;</code></li><li>建议通过 <code>@Param</code>明确指定参数名称</li><li>Page 对象会”透传”到 SQL 层</li></ul><h4 id="步骤三-XML-只写普通-SQL（不写分页）"><a href="#步骤三-XML-只写普通-SQL（不写分页）" class="headerlink" title="步骤三:XML 只写普通 SQL（不写分页）"></a>步骤三:XML 只写普通 SQL（不写分页）</h4><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">&quot;listContainTopicPage&quot;</span> <span class="attr">resultType</span>=<span class="string">&quot;com.xxx.SesStuEval&quot;</span>&gt;</span></span><br><span class="line">    SELECT *</span><br><span class="line">    FROM ses_stu_eval</span><br><span class="line">    <span class="tag">&lt;<span class="name">where</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">if</span> <span class="attr">test</span>=<span class="string">&quot;param.xxx != null&quot;</span>&gt;</span></span><br><span class="line">            AND xxx = #&#123;param.xxx&#125;</span><br><span class="line">        <span class="tag">&lt;/<span class="name">if</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">where</span>&gt;</span></span><br><span class="line">    ORDER BY create_time DESC</span><br><span class="line"><span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br></pre></td></tr></table></figure><p>✅ <strong>核心要点</strong>：</p><ul><li><strong>严禁</strong>在 SQL 中写 <code>LIMIT</code>分页</li><li><strong>严禁</strong>手动拼接分页逻辑</li><li>只需编写正常的业务查询语句</li><li>MyBatis-Plus 会自动在运行时添加分页条件</li></ul><h3 id="三大核心原则（必记）"><a href="#三大核心原则（必记）" class="headerlink" title="三大核心原则（必记）"></a>三大核心原则（必记）</h3><h4 id="Service-必须传-Page"><a href="#Service-必须传-Page" class="headerlink" title="Service 必须传 Page"></a>Service 必须传 Page</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  正确</span></span><br><span class="line">Page&lt;SesStuEval&gt; page = <span class="keyword">new</span> <span class="title class_">Page</span>&lt;&gt;(param.getCurrent(), param.getSize());</span><br><span class="line"></span><br><span class="line"><span class="comment">// 错误</span></span><br><span class="line"><span class="comment">// 1. 不创建 Page</span></span><br><span class="line"><span class="comment">// 2. 创建 Page 但不传分页参数</span></span><br><span class="line"><span class="comment">// 3. 传了 Page 但页码/条数不正确</span></span><br></pre></td></tr></table></figure><h4 id="Mapper-必须带-Page"><a href="#Mapper-必须带-Page" class="headerlink" title="Mapper 必须带 Page"></a>Mapper 必须带 Page</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 正确</span></span><br><span class="line">Page&lt;SesStuEval&gt; <span class="title function_">method</span><span class="params">(Page&lt;SesStuEval&gt; page, <span class="meta">@Param(&quot;param&quot;)</span> Object param)</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 错误</span></span><br><span class="line"><span class="comment">// 1. 参数中没有 Page</span></span><br><span class="line"><span class="comment">// 2. Page 参数不在第一位</span></span><br><span class="line"><span class="comment">// 3. 返回值类型是 List 而不是 Page</span></span><br></pre></td></tr></table></figure><h4 id="XML-不写-LIMIT"><a href="#XML-不写-LIMIT" class="headerlink" title="XML 不写 LIMIT"></a>XML 不写 LIMIT</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 正确写法</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> <span class="keyword">table</span> <span class="keyword">WHERE</span> <span class="keyword">condition</span> <span class="keyword">ORDER</span> <span class="keyword">BY</span> create_time;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 错误写法</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> <span class="keyword">table</span> <span class="keyword">WHERE</span> <span class="keyword">condition</span> </span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> create_time</span><br><span class="line">LIMIT <span class="number">0</span>, <span class="number">10</span>;  <span class="comment">-- 禁止手动分页</span></span><br></pre></td></tr></table></figure>]]></content>
+      
+      
+      <categories>
+          
+          <category> 部署 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 开发 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>在snowy框架中新增自定义模块</title>
+      <link href="/posts/6a434e1d.html"/>
+      <url>/posts/6a434e1d.html</url>
+      
+        <content type="html"><![CDATA[<blockquote><p>在snowy框架中新增一个自定义模块(或插件),需要遵循清晰的多模块项目管理规范,其核心思想是通过模块化分离,实现功能插件的独立开发、统一管理与集成.</p></blockquote><h3 id="一、项目结构与模块划分原则"><a href="#一、项目结构与模块划分原则" class="headerlink" title="一、项目结构与模块划分原则"></a>一、项目结构与模块划分原则</h3><p>snowy的插件体系采用“接口-实现”分离的架构</p><p> 1、<strong>插件接口处(snowy-plugin-api/)</strong>: 存放模块的API定义、DTO、枚举、常量等公共内容。此模块的职责是定义契约，不包含具体实现，可供其他模块依赖以调用接口。</p><p> 2、<strong>插件实现从(snowy-plugin/)</strong>:存放模块的业务逻辑、控制器、服务实现、Mapper、资源配置等具体实现代码。</p><p> 3、<strong>主启动模块(snowy—plugin-app)</strong>:作为最终的应用入口，负责集成和启动所有功能插件。</p><h3 id="二、新增自定义模块“A”的详细步骤"><a href="#二、新增自定义模块“A”的详细步骤" class="headerlink" title="二、新增自定义模块“A”的详细步骤"></a>二、新增自定义模块“A”的详细步骤</h3><p>假设新增的模块名为 <strong><code>a</code></strong>。</p><h4 id="步骤1-创建插件接口模块"><a href="#步骤1-创建插件接口模块" class="headerlink" title="步骤1: 创建插件接口模块"></a>步骤1: 创建插件接口模块</h4><ol><li><p>在 <code>snowy-plugin-api</code>目录下，创建模块 <code>snowy-plugin-a-api</code></p></li><li><p>编辑 <code>snowy-plugin-a-api</code>的 <code>pom.xml</code>，必须引入公共核心模块 <code>snowy-common</code>，以确保能使用框架的基础设施。</p><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 位于 snowy-plugin-a-api/pom.xml --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>vip.xiaonuo<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>snowy-common<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure></li><li><p>在 <code>snowy-plugin-api</code>目录的<strong>父级</strong> <code>pom.xml</code>中，声明此子模块，以将其纳入统一构建。</p><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 位于 snowy-plugin-api/pom.xml 的 modules 部分 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">module</span>&gt;</span>snowy-plugin-a-api<span class="tag">&lt;/<span class="name">module</span>&gt;</span></span><br></pre></td></tr></table></figure></li></ol><h4 id="步骤2-创建插件实现模块"><a href="#步骤2-创建插件实现模块" class="headerlink" title="步骤2:创建插件实现模块"></a>步骤2:创建插件实现模块</h4><ol><li><p>在 <code>snowy-plugin</code>目录下，创建模块 <code>snowy-plugin-a</code></p></li><li><p>编辑 <code>snowy-plugin-a</code>的 <code>pom.xml</code>，<strong>必须引入步骤1创建的自身API模块</strong> <code>snowy-plugin-a-api</code>，以实现对接口定义的依赖 </p><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 位于 snowy-plugin-a/pom.xml --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>vip.xiaonuo<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>snowy-plugin-a-api<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;project.parent.version&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure></li><li><p>在 <code>snowy-plugin</code>目录的<strong>父级</strong> <code>pom.xml</code>中，声明此子模块.</p><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 位于 snowy-plugin/pom.xml 的 modules 部分 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">module</span>&gt;</span>snowy-plugin-a<span class="tag">&lt;/<span class="name">module</span>&gt;</span></span><br></pre></td></tr></table></figure></li></ol><h4 id="步骤3-在主启动模块中集成插件"><a href="#步骤3-在主启动模块中集成插件" class="headerlink" title="步骤3:在主启动模块中集成插件"></a>步骤3:在主启动模块中集成插件</h4><p>1、编辑主应用模块 <code>snowy-web-app</code>的 <code>pom.xml</code>，引入插件的<strong>实现模块</strong> <code>snowy-plugin-a</code>。这是插件功能被实际加载到运行中的应用的关键步骤。</p><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 位于 snowy-web-app/pom.xml --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>vip.xiaonuo<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>snowy-plugin-a<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;project.parent.version&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure><h4 id="步骤4-在项目根POM中进行总声明（关键且易遗漏步骤）"><a href="#步骤4-在项目根POM中进行总声明（关键且易遗漏步骤）" class="headerlink" title="步骤4:在项目根POM中进行总声明（关键且易遗漏步骤）"></a>步骤4:在项目根POM中进行总声明（关键且易遗漏步骤）</h4><p>1、编辑项目最顶层的根目录下的 <code>pom.xml</code>文件。</p><p>2、在 <code>&lt;modules&gt;</code>部分，添加新增的两个模块，确保它们能被Maven顶级构建正确识别和编译。</p><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">             <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>vip.xiaonuo<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">             <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>snowy-plugin-a<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">             <span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;snowy.version&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">         <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">         <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">             <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>vip.xiaonuo<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">             <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>snowy-plugin-a-api<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">             <span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;snowy.version&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">         <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>]]></content>
+      
+      
+      <categories>
+          
+          <category> 开发 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 开发 </tag>
+            
+            <tag> snowy </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>ssh基本用法</title>
       <link href="/posts/f5f30b62.html"/>
       <url>/posts/f5f30b62.html</url>
@@ -70,6 +122,17 @@
     
     
     <entry>
+      <title>分类</title>
+      <link href="/categories/index.html"/>
+      <url>/categories/index.html</url>
+      
+        <content type="html"><![CDATA[]]></content>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>归档</title>
       <link href="/archives/index.html"/>
       <url>/archives/index.html</url>
@@ -81,20 +144,20 @@
     
     
     <entry>
-      <title>关于</title>
-      <link href="/about/index.html"/>
-      <url>/about/index.html</url>
+      <title></title>
+      <link href="/css/custom.css"/>
+      <url>/css/custom.css</url>
       
-        <content type="html"><![CDATA[]]></content>
+        <content type="html"><![CDATA[/* 页脚与头图透明 */#footer {  background: transparent !important;}#page-header {  background: transparent !important;}/* 白天模式遮罩透明 */#footer::before {  background: transparent !important;}#page-header::before {  background: transparent !important;}/* 夜间模式遮罩透明 */[data-theme="dark"] #footer::before {  background: transparent !important;}[data-theme="dark"] #page-header::before {  background: transparent !important;}/* 一级菜单居中 *//* #nav .menus_items {  position: absolute !important;  width: fit-content !important;  left: 50% !important;  transform: translateX(-50%) !important;}/* 子菜单横向展示 */#nav .menus_items .menus_item:hover .menus_item_child {  display: flex !important;}/* 这里的2是代表导航栏的第2个元素，即有子菜单的元素，可以按自己需求修改 */.menus_items .menus_item:nth-child(5) .menus_item_child {  left: -38px;} *//* 日间模式不生效 */[data-theme="light"] #site-name,[data-theme="light"] #site-title,[data-theme="light"] #site-subtitle,[data-theme="light"] #post-info {  animation: none;}/* 夜间模式生效 */[data-theme="dark"] #site-name,[data-theme="dark"] #site-title {  animation: light_15px 10s linear infinite;}[data-theme="dark"] #site-subtitle {  animation: light_10px 10s linear infinite;}[data-theme="dark"] #post-info {  animation: light_5px 10s linear infinite;}/* 关键帧描述 */@keyframes light_15px {  0% {    text-shadow: #5636ed 0 0 15px;  }  12.5% {    text-shadow: #11ee5e 0 0 15px;  }  25% {    text-shadow: #f14747 0 0 15px;  }  37.5% {    text-shadow: #f1a247 0 0 15px;  }  50% {    text-shadow: #f1ee47 0 0 15px;  }  50% {    text-shadow: #b347f1 0 0 15px;  }  62.5% {    text-shadow: #002afa 0 0 15px;  }  75% {    text-shadow: #ed709b 0 0 15px;  }  87.5% {    text-shadow: #39c5bb 0 0 15px;  }  100% {    text-shadow: #5636ed 0 0 15px;  }}@keyframes light_10px {  0% {    text-shadow: #5636ed 0 0 10px;  }  12.5% {    text-shadow: #11ee5e 0 0 10px;  }  25% {    text-shadow: #f14747 0 0 10px;  }  37.5% {    text-shadow: #f1a247 0 0 10px;  }  50% {    text-shadow: #f1ee47 0 0 10px;  }  50% {    text-shadow: #b347f1 0 0 10px;  }  62.5% {    text-shadow: #002afa 0 0 10px;  }  75% {    text-shadow: #ed709b 0 0 10px;  }  87.5% {    text-shadow: #39c5bb 0 0 10px;  }  100% {    text-shadow: #5636ed 0 0 10px;  }}@keyframes light_5px {  0% {    text-shadow: #5636ed 0 0 5px;  }  12.5% {    text-shadow: #11ee5e 0 0 5px;  }  25% {    text-shadow: #f14747 0 0 5px;  }  37.5% {    text-shadow: #f1a247 0 0 15px;  }  50% {    text-shadow: #f1ee47 0 0 5px;  }  50% {    text-shadow: #b347f1 0 0 5px;  }  62.5% {    text-shadow: #002afa 0 0 5px;  }  75% {    text-shadow: #ed709b 0 0 5px;  }  87.5% {    text-shadow: #39c5bb 0 0 5px;  }  100% {    text-shadow: #5636ed 0 0 5px;  }}/* 背景宇宙星光  */#universe{  display: block;  position: fixed;  margin: 0;  padding: 0;  border: 0;  outline: 0;  left: 0;  top: 0;  width: 100%;  height: 100%;  pointer-events: none;  /* 这个是调置顶的优先级的，-1在文章页下面，背景上面，个人推荐这种 */  z-index: -1;}:root {  --trans-light: rgba(255, 255, 255, 0.88);  --trans-dark: rgba(25, 25, 25, 0.6);  --border-style: 1px solid rgb(169, 169, 169);  --backdrop-filter: blur(5px) saturate(150%);}/* 首页文章卡片 */#recent-posts > .recent-post-item {  background: var(--trans-light);  backdrop-filter: var(--backdrop-filter);  border-radius: 25px;  border: var(--border-style);}/* 首页侧栏卡片 */#aside-content .card-widget {  background: var(--trans-light);  backdrop-filter: var(--backdrop-filter);  border-radius: 18px;  border: var(--border-style);}/* 文章页、归档页、普通页面 */div#post,div#page,div#archive {  background: var(--trans-light);  backdrop-filter: var(--backdrop-filter);  border: var(--border-style);  border-radius: 20px;}/* 导航栏 */#page-header.nav-fixed #nav {  background: rgba(255, 255, 255, 0.75);  backdrop-filter: var(--backdrop-filter);}[data-theme="dark"] #page-header.nav-fixed #nav {  background: rgba(0, 0, 0, 0.7) !important;}/* 夜间模式遮罩 */[data-theme="dark"] #recent-posts > .recent-post-item,[data-theme="dark"] #aside-content .card-widget,[data-theme="dark"] div#post,[data-theme="dark"] div#archive,[data-theme="dark"] div#page {  background: var(--trans-dark);}/* 夜间模式页脚页头遮罩透明 */[data-theme="dark"] #footer::before {  background: transparent !important;}[data-theme="dark"] #page-header::before {  background: transparent !important;}/* 阅读模式 */.read-mode #aside-content .card-widget {  background: rgba(158, 204, 171, 0.5) !important;}.read-mode div#post {  background: rgba(158, 204, 171, 0.5) !important;}/* 夜间模式下的阅读模式 */[data-theme="dark"] .read-mode #aside-content .card-widget {  background: rgba(25, 25, 25, 0.9) !important;  color: #ffffff;}[data-theme="dark"] .read-mode div#post {  background: rgba(25, 25, 25, 0.9) !important;  color: #ffffff;}/* 小冰分类分类磁铁黑夜模式适配 *//* 一般状态 */[data-theme="dark"] .magnet_link_context {  background: #1e1e1e;  color: antiquewhite;}/* 鼠标悬浮状态 */[data-theme="dark"] .magnet_link_context:hover {  background: #3ecdf1;  color: #f2f2f2;}/* 去掉查看更多文字的按钮 小冰分类*//* 隐藏磁贴的查看更多按钮 */.magnet_link_more {  display: none !important;}/* 确保容器高度自适应 */#catalog_magnet {  display: flex;  flex-wrap: wrap;  gap: 10px; /* 调整磁贴间距 */}]]></content>
       
     </entry>
     
     
     
     <entry>
-      <title>分类</title>
-      <link href="/categories/index.html"/>
-      <url>/categories/index.html</url>
+      <title>关于</title>
+      <link href="/about/index.html"/>
+      <url>/about/index.html</url>
       
         <content type="html"><![CDATA[]]></content>
       
@@ -115,17 +178,6 @@
     
     <entry>
       <title></title>
-      <link href="/css/custom.css"/>
-      <url>/css/custom.css</url>
-      
-        <content type="html"><![CDATA[/* 页脚与头图透明 */#footer {  background: transparent !important;}#page-header {  background: transparent !important;}/* 白天模式遮罩透明 */#footer::before {  background: transparent !important;}#page-header::before {  background: transparent !important;}/* 夜间模式遮罩透明 */[data-theme="dark"] #footer::before {  background: transparent !important;}[data-theme="dark"] #page-header::before {  background: transparent !important;}/* 一级菜单居中 *//* #nav .menus_items {  position: absolute !important;  width: fit-content !important;  left: 50% !important;  transform: translateX(-50%) !important;}/* 子菜单横向展示 */#nav .menus_items .menus_item:hover .menus_item_child {  display: flex !important;}/* 这里的2是代表导航栏的第2个元素，即有子菜单的元素，可以按自己需求修改 */.menus_items .menus_item:nth-child(5) .menus_item_child {  left: -38px;} *//* 日间模式不生效 */[data-theme="light"] #site-name,[data-theme="light"] #site-title,[data-theme="light"] #site-subtitle,[data-theme="light"] #post-info {  animation: none;}/* 夜间模式生效 */[data-theme="dark"] #site-name,[data-theme="dark"] #site-title {  animation: light_15px 10s linear infinite;}[data-theme="dark"] #site-subtitle {  animation: light_10px 10s linear infinite;}[data-theme="dark"] #post-info {  animation: light_5px 10s linear infinite;}/* 关键帧描述 */@keyframes light_15px {  0% {    text-shadow: #5636ed 0 0 15px;  }  12.5% {    text-shadow: #11ee5e 0 0 15px;  }  25% {    text-shadow: #f14747 0 0 15px;  }  37.5% {    text-shadow: #f1a247 0 0 15px;  }  50% {    text-shadow: #f1ee47 0 0 15px;  }  50% {    text-shadow: #b347f1 0 0 15px;  }  62.5% {    text-shadow: #002afa 0 0 15px;  }  75% {    text-shadow: #ed709b 0 0 15px;  }  87.5% {    text-shadow: #39c5bb 0 0 15px;  }  100% {    text-shadow: #5636ed 0 0 15px;  }}@keyframes light_10px {  0% {    text-shadow: #5636ed 0 0 10px;  }  12.5% {    text-shadow: #11ee5e 0 0 10px;  }  25% {    text-shadow: #f14747 0 0 10px;  }  37.5% {    text-shadow: #f1a247 0 0 10px;  }  50% {    text-shadow: #f1ee47 0 0 10px;  }  50% {    text-shadow: #b347f1 0 0 10px;  }  62.5% {    text-shadow: #002afa 0 0 10px;  }  75% {    text-shadow: #ed709b 0 0 10px;  }  87.5% {    text-shadow: #39c5bb 0 0 10px;  }  100% {    text-shadow: #5636ed 0 0 10px;  }}@keyframes light_5px {  0% {    text-shadow: #5636ed 0 0 5px;  }  12.5% {    text-shadow: #11ee5e 0 0 5px;  }  25% {    text-shadow: #f14747 0 0 5px;  }  37.5% {    text-shadow: #f1a247 0 0 15px;  }  50% {    text-shadow: #f1ee47 0 0 5px;  }  50% {    text-shadow: #b347f1 0 0 5px;  }  62.5% {    text-shadow: #002afa 0 0 5px;  }  75% {    text-shadow: #ed709b 0 0 5px;  }  87.5% {    text-shadow: #39c5bb 0 0 5px;  }  100% {    text-shadow: #5636ed 0 0 5px;  }}/* 背景宇宙星光  */#universe{  display: block;  position: fixed;  margin: 0;  padding: 0;  border: 0;  outline: 0;  left: 0;  top: 0;  width: 100%;  height: 100%;  pointer-events: none;  /* 这个是调置顶的优先级的，-1在文章页下面，背景上面，个人推荐这种 */  z-index: -1;}:root {  --trans-light: rgba(255, 255, 255, 0.88);  --trans-dark: rgba(25, 25, 25, 0.6);  --border-style: 1px solid rgb(169, 169, 169);  --backdrop-filter: blur(5px) saturate(150%);}/* 首页文章卡片 */#recent-posts > .recent-post-item {  background: var(--trans-light);  backdrop-filter: var(--backdrop-filter);  border-radius: 25px;  border: var(--border-style);}/* 首页侧栏卡片 */#aside-content .card-widget {  background: var(--trans-light);  backdrop-filter: var(--backdrop-filter);  border-radius: 18px;  border: var(--border-style);}/* 文章页、归档页、普通页面 */div#post,div#page,div#archive {  background: var(--trans-light);  backdrop-filter: var(--backdrop-filter);  border: var(--border-style);  border-radius: 20px;}/* 导航栏 */#page-header.nav-fixed #nav {  background: rgba(255, 255, 255, 0.75);  backdrop-filter: var(--backdrop-filter);}[data-theme="dark"] #page-header.nav-fixed #nav {  background: rgba(0, 0, 0, 0.7) !important;}/* 夜间模式遮罩 */[data-theme="dark"] #recent-posts > .recent-post-item,[data-theme="dark"] #aside-content .card-widget,[data-theme="dark"] div#post,[data-theme="dark"] div#archive,[data-theme="dark"] div#page {  background: var(--trans-dark);}/* 夜间模式页脚页头遮罩透明 */[data-theme="dark"] #footer::before {  background: transparent !important;}[data-theme="dark"] #page-header::before {  background: transparent !important;}/* 阅读模式 */.read-mode #aside-content .card-widget {  background: rgba(158, 204, 171, 0.5) !important;}.read-mode div#post {  background: rgba(158, 204, 171, 0.5) !important;}/* 夜间模式下的阅读模式 */[data-theme="dark"] .read-mode #aside-content .card-widget {  background: rgba(25, 25, 25, 0.9) !important;  color: #ffffff;}[data-theme="dark"] .read-mode div#post {  background: rgba(25, 25, 25, 0.9) !important;  color: #ffffff;}]]></content>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title></title>
       <link href="/js/universe.js"/>
       <url>/js/universe.js</url>
       
@@ -136,9 +188,9 @@
     
     
     <entry>
-      <title>标签</title>
-      <link href="/tags/index.html"/>
-      <url>/tags/index.html</url>
+      <title>説説</title>
+      <link href="/shuoshuo/index.html"/>
+      <url>/shuoshuo/index.html</url>
       
         <content type="html"><![CDATA[]]></content>
       
@@ -158,9 +210,9 @@
     
     
     <entry>
-      <title>説説</title>
-      <link href="/shuoshuo/index.html"/>
-      <url>/shuoshuo/index.html</url>
+      <title>标签</title>
+      <link href="/tags/index.html"/>
+      <url>/tags/index.html</url>
       
         <content type="html"><![CDATA[]]></content>
       
