@@ -10,12 +10,12 @@
   <rights>All rights reserved 2026, moh</rights>
   <subtitle>活着就好</subtitle>
   <title>moh`blog</title>
-  <updated>2026-03-30T14:46:32.712Z</updated>
+  <updated>2026-03-30T15:39:30.506Z</updated>
   <entry>
     <author>
       <name>moh</name>
     </author>
-    <category term="部署" scheme="http://example.com/categories/%E9%83%A8%E7%BD%B2/"/>
+    <category term="开发" scheme="http://example.com/categories/%E5%BC%80%E5%8F%91/"/>
     <category term="开发" scheme="http://example.com/tags/%E5%BC%80%E5%8F%91/"/>
     <content>
       <![CDATA[<h3 id="MyBatis-Plus-自动分页（三步核心笔记）"><a href="#MyBatis-Plus-自动分页（三步核心笔记）" class="headerlink" title="MyBatis-Plus 自动分页（三步核心笔记）"></a>MyBatis-Plus 自动分页（三步核心笔记）</h3><h4 id="步骤一-service层必须创建Page"><a href="#步骤一-service层必须创建Page" class="headerlink" title="步骤一: service层必须创建Page"></a>步骤一: service层必须创建Page</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> Page&lt;SesStuEval&gt; <span class="title function_">listPage</span><span class="params">(<span class="type">int</span> currentPage ,<span class="type">int</span> pageSize,SesStuEvalPageParam param)</span> &#123;</span><br><span class="line">    Page&lt;SesStuEval&gt; page = <span class="keyword">new</span> <span class="title class_">Page</span>&lt;&gt;(pcurrentPage, pageSize);</span><br><span class="line">    <span class="keyword">return</span> sesStuEvalMapper.listPage(page, param);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>✅ <strong>核心要点</strong>：</p><ul><li>必须通过<strong>new Page&lt;&gt;(current,size)</strong>创建分页对象</li><li>currentPage:当前页码(从1开始)</li><li>pageSize:每页数据条数</li><li>Ser’vice层服务初始化分页参数</li></ul><h4 id="步骤二-Mapper-必须接受Page"><a href="#步骤二-Mapper-必须接受Page" class="headerlink" title="步骤二:Mapper 必须接受Page"></a>步骤二:Mapper 必须接受Page</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Page&lt;SesStuEval&gt; <span class="title function_">listContainTopicPage</span><span class="params">(</span></span><br><span class="line"><span class="params">    <span class="meta">@Param(&quot;page&quot;)</span> Page&lt;SesStuEval&gt; page,</span></span><br><span class="line"><span class="params">    <span class="meta">@Param(&quot;param&quot;)</span> SesStuEvalPageParam param</span></span><br><span class="line"><span class="params">)</span>;</span><br></pre></td></tr></table></figure><p>✅ <strong>核心要点</strong>：</p><ul><li>方法第一个参数必须是 <code>Page&lt;T&gt;</code>类型</li><li>返回值类型也必须是 <code>Page&lt;T&gt;</code></li><li>建议通过 <code>@Param</code>明确指定参数名称</li><li>Page 对象会”透传”到 SQL 层</li></ul><h4 id="步骤三-XML-只写普通-SQL（不写分页）"><a href="#步骤三-XML-只写普通-SQL（不写分页）" class="headerlink" title="步骤三:XML 只写普通 SQL（不写分页）"></a>步骤三:XML 只写普通 SQL（不写分页）</h4><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">&quot;listContainTopicPage&quot;</span> <span class="attr">resultType</span>=<span class="string">&quot;com.xxx.SesStuEval&quot;</span>&gt;</span></span><br><span class="line">    SELECT *</span><br><span class="line">    FROM ses_stu_eval</span><br><span class="line">    <span class="tag">&lt;<span class="name">where</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">if</span> <span class="attr">test</span>=<span class="string">&quot;param.xxx != null&quot;</span>&gt;</span></span><br><span class="line">            AND xxx = #&#123;param.xxx&#125;</span><br><span class="line">        <span class="tag">&lt;/<span class="name">if</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">where</span>&gt;</span></span><br><span class="line">    ORDER BY create_time DESC</span><br><span class="line"><span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br></pre></td></tr></table></figure><p>✅ <strong>核心要点</strong>：</p><ul><li><strong>严禁</strong>在 SQL 中写 <code>LIMIT</code>分页</li><li><strong>严禁</strong>手动拼接分页逻辑</li><li>只需编写正常的业务查询语句</li><li>MyBatis-Plus 会自动在运行时添加分页条件</li></ul><h3 id="三大核心原则（必记）"><a href="#三大核心原则（必记）" class="headerlink" title="三大核心原则（必记）"></a>三大核心原则（必记）</h3><h4 id="Service-必须传-Page"><a href="#Service-必须传-Page" class="headerlink" title="Service 必须传 Page"></a>Service 必须传 Page</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  正确</span></span><br><span class="line">Page&lt;SesStuEval&gt; page = <span class="keyword">new</span> <span class="title class_">Page</span>&lt;&gt;(param.getCurrent(), param.getSize());</span><br><span class="line"></span><br><span class="line"><span class="comment">// 错误</span></span><br><span class="line"><span class="comment">// 1. 不创建 Page</span></span><br><span class="line"><span class="comment">// 2. 创建 Page 但不传分页参数</span></span><br><span class="line"><span class="comment">// 3. 传了 Page 但页码/条数不正确</span></span><br></pre></td></tr></table></figure><h4 id="Mapper-必须带-Page"><a href="#Mapper-必须带-Page" class="headerlink" title="Mapper 必须带 Page"></a>Mapper 必须带 Page</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 正确</span></span><br><span class="line">Page&lt;SesStuEval&gt; <span class="title function_">method</span><span class="params">(Page&lt;SesStuEval&gt; page, <span class="meta">@Param(&quot;param&quot;)</span> Object param)</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 错误</span></span><br><span class="line"><span class="comment">// 1. 参数中没有 Page</span></span><br><span class="line"><span class="comment">// 2. Page 参数不在第一位</span></span><br><span class="line"><span class="comment">// 3. 返回值类型是 List 而不是 Page</span></span><br></pre></td></tr></table></figure><h4 id="XML-不写-LIMIT"><a href="#XML-不写-LIMIT" class="headerlink" title="XML 不写 LIMIT"></a>XML 不写 LIMIT</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 正确写法</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> <span class="keyword">table</span> <span class="keyword">WHERE</span> <span class="keyword">condition</span> <span class="keyword">ORDER</span> <span class="keyword">BY</span> create_time;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 错误写法</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> <span class="keyword">table</span> <span class="keyword">WHERE</span> <span class="keyword">condition</span> </span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> create_time</span><br><span class="line">LIMIT <span class="number">0</span>, <span class="number">10</span>;  <span class="comment">-- 禁止手动分页</span></span><br></pre></td></tr></table></figure>]]>
@@ -27,7 +27,7 @@
       <![CDATA[<h3 id="MyBatis-Plus-自动分页（三步核心笔记）"><a href="#MyBatis-Plus-自动分页（三步核心笔记）" class="headerlink" title="MyBatis-Plus 自动分页（三步核心笔记）"></a>MyBatis-Plu]]>
     </summary>
     <title>mybatis-plus自动分页</title>
-    <updated>2026-03-30T14:46:32.712Z</updated>
+    <updated>2026-03-30T15:39:30.506Z</updated>
   </entry>
   <entry>
     <author>
@@ -49,7 +49,7 @@
 <h3 id="一、项目结构与模块划分原则"><a href]]>
     </summary>
     <title>在snowy框架中新增自定义模块</title>
-    <updated>2026-03-30T14:46:35.077Z</updated>
+    <updated>2026-03-30T15:39:20.516Z</updated>
   </entry>
   <entry>
     <author>
@@ -69,7 +69,7 @@
 <h3 id="基本用法"><a href="#基本用法" class="heade]]>
     </summary>
     <title>ssh基本用法</title>
-    <updated>2026-03-29T14:58:29.542Z</updated>
+    <updated>2026-03-30T15:39:10.601Z</updated>
   </entry>
   <entry>
     <author>
@@ -87,6 +87,6 @@
       <![CDATA[<h1 id="docker和docker-commpose离线安装"><a href="#docker和docker-commpose离线安装" class="headerlink" title="docker和docker-commpose离线安装"></a>docker和d]]>
     </summary>
     <title>docker离线部署</title>
-    <updated>2026-03-29T06:04:27.523Z</updated>
+    <updated>2026-03-30T15:37:26.977Z</updated>
   </entry>
 </feed>
