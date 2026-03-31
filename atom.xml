@@ -10,7 +10,25 @@
   <rights>All rights reserved 2026, moh</rights>
   <subtitle>活着就好</subtitle>
   <title>moh`blog</title>
-  <updated>2026-03-30T15:39:30.506Z</updated>
+  <updated>2026-03-31T15:16:58.475Z</updated>
+  <entry>
+    <author>
+      <name>moh</name>
+    </author>
+    <category term="软考" scheme="http://example.com/categories/%E8%BD%AF%E8%80%83/"/>
+    <category term="开发" scheme="http://example.com/tags/%E5%BC%80%E5%8F%91/"/>
+    <content>
+      <![CDATA[<p>测试</p>]]>
+    </content>
+    <id>http://example.com/posts/0.html</id>
+    <link href="http://example.com/posts/0.html"/>
+    <published>2026-03-31T15:16:24.844Z</published>
+    <summary>
+      <![CDATA[<p>测试</p>]]>
+    </summary>
+    <title>mybatis-plus自动分页</title>
+    <updated>2026-03-31T15:16:58.475Z</updated>
+  </entry>
   <entry>
     <author>
       <name>moh</name>
@@ -27,7 +45,7 @@
       <![CDATA[<h3 id="MyBatis-Plus-自动分页（三步核心笔记）"><a href="#MyBatis-Plus-自动分页（三步核心笔记）" class="headerlink" title="MyBatis-Plus 自动分页（三步核心笔记）"></a>MyBatis-Plu]]>
     </summary>
     <title>mybatis-plus自动分页</title>
-    <updated>2026-03-30T15:39:30.506Z</updated>
+    <updated>2026-03-31T15:21:31.488Z</updated>
   </entry>
   <entry>
     <author>
